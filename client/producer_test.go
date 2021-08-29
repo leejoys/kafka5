@@ -11,7 +11,7 @@ func TestClient_sendMessages(t *testing.T) {
 	// Инициализация клиента Kafka.
 	kfk, err := New(
 		[]string{os.Getenv("KAFKA_BROKER")},
-		"test-topic",
+		"test",
 		"test-consumer-group",
 	)
 	if err != nil {
