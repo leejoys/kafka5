@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -66,4 +67,21 @@ func (c *Client) sendMessages(messages []kafka.Message) error {
 func (c *Client) getMessage() (kafka.Message, error) {
 	msg, err := c.Reader.ReadMessage(context.Background())
 	return msg, err
+}
+
+// fetchProcessCommit сначала выбирает сообщение из очереди,
+// потом обрабатывает, после чего подтверждает.
+func (c *Client) fetchProcessCommit() error {
+	// Выборка очередного сообщения из Kafka.
+	msg, err := c.Reader.FetchMessage(context.Background())
+	if err != nil {
+		return err
+	}
+
+	// Обработка сообщения
+	fmt.Println(msg.Key, msg.Value)
+
+	// Подтверждение сообщения как обработанного.
+	err = c.Reader.CommitMessages(context.Background(), msg)
+	return err
 }
